@@ -1,27 +1,20 @@
-/* eslint-disable react/no-unused-prop-types */
-/* eslint-disable no-console */
 import { useState } from 'react';
-import { controls, storageNames } from './const/const';
+import { controls } from './utils/const';
+import '../src/app-styles.css';
+import { addToStorage, clearCompleted, deleteFromStorage, filteredTasks, updateStorage } from './utils/utils';
+import { Tasks } from './utils/types';
 
-interface Tasks {
-  task: string,
-  isDone: boolean,
-  date: string,
-}
 export default function App() {
+  const [filter, setFilter] = useState('All');
   const [text, setText] = useState('');
   const [isNeedToUpdate, setIsNeedToUpdate] = useState(false);
   const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
 
-  const handleSubmit = () => {
-    const taskToAdd = { task: text, isDone: false, date: Date.now() };
-    localStorage.setItem(storageNames.tasks, tasks.length > 0 ? JSON.stringify([...tasks, taskToAdd]) : JSON.stringify([taskToAdd]));
-  };
 
   return (
     <>
       <div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={() => addToStorage(tasks, text)}>
           <input
             type="text"
             placeholder="Type your task now!"
@@ -32,55 +25,38 @@ export default function App() {
 
         <ul>
           {tasks &&
-            tasks.map(
-              ({
-                task,
-                isDone,
-                date,
-              }: {
-                task: string;
-                isDone: boolean;
-                date: string;
-              }) => (
-                <>
-                  <label key={date}>
-                    <input
-                      type="checkbox"
-                      key={date}
-                      className={!isDone ? 'active' : ''}
-                    />
-                    {task}
-                  </label>
-                  <button
-                    type="button"
-                    key={`${date}${Math.random()}`}
-                    onClick={() => {
-                      const findedTask = tasks.findIndex(
-                        (el: Tasks) => el.date === date,
-                      );
-                      tasks.splice(findedTask, 1);
-                      localStorage.setItem(storageNames.tasks, JSON.stringify(tasks));
-                      setIsNeedToUpdate(!isNeedToUpdate);
-                    }}
-                  >
-                    Delete task
-                  </button>
-                </>
-              ),
-            )}
+            filteredTasks[filter](tasks).map(({ task, isDone, date }) => (
+              <>
+                <label key={date} className={`${isDone ? 'active' : ''}`}>
+                  <input
+                    type="checkbox"
+                    onChange={() => updateStorage(tasks, setIsNeedToUpdate, date, isNeedToUpdate)}
+                    checked={isDone}
+                  />
+                  {task}
+                </label>
+                <button
+                  type="button"
+                  key={`${date}${Math.random()}`}
+                  onClick={() => deleteFromStorage(tasks, setIsNeedToUpdate, date, isNeedToUpdate)}
+                >
+                  Delete task
+                </button>
+              </>
+            ))}
         </ul>
       </div>
       <span>
-        {tasks.filter(({ isDone }: { isDone: boolean }) => !isDone).length}{' '}
+        {tasks.filter(({ isDone }: Tasks) => !isDone).length}{' '}
         items left
       </span>
       <div className="controls">
         {controls.map((button) => (
-          <button type="button" key={button}>
+          <button type="button" key={button} onClick={() => setFilter(button)}>
             {button}
           </button>
         ))}
-        <button type="button">Clear completed</button>
+        <button type="button" onClick={() => clearCompleted(tasks, setIsNeedToUpdate, isNeedToUpdate)}>Clear completed</button>
       </div>
     </>
   );
