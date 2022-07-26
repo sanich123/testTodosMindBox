@@ -3,3 +3,10 @@ export interface Tasks {
   isDone: boolean,
   date: string,
 }
+
+export interface ChangeStorage {
+  tasks: Tasks[];
+  setIsNeedToUpdate: (arg: boolean) => void;
+  date?: string;
+  isNeedToUpdate: boolean;
+}

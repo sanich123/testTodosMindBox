@@ -1,18 +1,16 @@
-import { storageNames } from './const';
-import { Tasks } from './types';
+import { storageActions, storageNames } from './const';
+import { ChangeStorage, Tasks } from './types';
 
-interface FilteredTasks {
-  [key: string]: (tasks: Tasks[]) => Tasks[],
-}
-
-export const filteredTasks: FilteredTasks = {
-  'All': (tasks) => tasks,
-  'Active': (tasks) => tasks.filter((el) => el.isDone === false),
-  'Completed': (tasks) => tasks.filter((el) => el.isDone === true),
+export const filteredTasks: {
+  [key: string]: (tasks: Tasks[]) => Tasks[];
+} = {
+  All: (tasks) => tasks,
+  Active: (tasks) => tasks.filter((el) => el.isDone === false),
+  Completed: (tasks) => tasks.filter((el) => el.isDone === true),
 };
 
 export const addToStorage = (tasks: Tasks[], text: string) => {
-  const taskToAdd = { task: text, isDone: false, date: Date.now() };
+  const taskToAdd = { task: text, isDone: false, date: Date.now()};
   localStorage.setItem(
     storageNames.tasks,
     tasks.length > 0
@@ -21,36 +19,16 @@ export const addToStorage = (tasks: Tasks[], text: string) => {
   );
 };
 
-export const updateStorage = (tasks: Tasks[], setIsNeedToUpdate: (arg: boolean) => void, date: string, isNeedToUpdate: boolean) => {
-  const updatedTasks = tasks.map((el: Tasks) => {
-    if (el.date === date) {
-      el.isDone = !el.isDone;
-      return el;
-    } else {
-      return el;
-    }
-  });
-  localStorage.setItem(
-    storageNames.tasks,
-    JSON.stringify(updatedTasks),
-  );
-  setIsNeedToUpdate(!isNeedToUpdate);
-};
-
-export const deleteFromStorage = (tasks: Tasks[], setIsNeedToUpdate: (arg: boolean) => void, date: string, isNeedToUpdate: boolean) => {
-  const findedTask = tasks.findIndex(
-    (el: Tasks) => el.date === date,
-  );
-  tasks.splice(findedTask, 1);
-  localStorage.setItem(
-    storageNames.tasks,
-    JSON.stringify(tasks),
-  );
-  setIsNeedToUpdate(!isNeedToUpdate);
-};
-
-export const clearCompleted = (tasks: Tasks[], setIsNeedToUpdate: (arg: boolean) => void, isNeedToUpdate: boolean) => {
-  const filtredCompleted = tasks.filter((el) => !el.isDone);
-  localStorage.setItem(storageNames.tasks, JSON.stringify(filtredCompleted));
+export const actionsWithStorage = ({action, tasks, setIsNeedToUpdate, date, isNeedToUpdate}: ChangeStorage & {action: string}) => {
+  if (action === storageActions.update) {
+    tasks = tasks.map((task) => task.date === date ? { ...task, isDone: !task.isDone } : task);
+  }
+  if (action === storageActions.delete) {
+    tasks.splice(tasks.findIndex((task) => task.date === date), 1);
+  }
+  if (action === storageActions.clearCompleted) {
+    tasks = tasks.filter((task) => !task.isDone);
+  }
+  localStorage.setItem(storageNames.tasks, JSON.stringify(tasks));
   setIsNeedToUpdate(!isNeedToUpdate);
 };
