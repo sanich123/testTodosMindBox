@@ -1,5 +1,5 @@
-import { Tasks } from '../utils/types';
-import { addToStorage } from '../utils/utils';
+import { Tasks } from '../../utils/types';
+import { addToStorage } from '../../utils/utils';
 
 interface InputTextProps {
   tasks: Tasks[],
@@ -13,6 +13,7 @@ export default function InputText({tasks, text, setText}: InputTextProps) {
     <form onSubmit={() => addToStorage(tasks, text)}>
       <input
         type="text"
+        className="input-text"
         placeholder="Type your task now!"
         value={text}
         onChange={({ target }) => setText(target.value)}

@@ -21,10 +21,10 @@ export const addToStorage = (tasks: Tasks[], text: string) => {
 
 export const actionsWithStorage = ({action, tasks, setIsNeedToUpdate, date, isNeedToUpdate}: ChangeStorage & {action: string}) => {
   if (action === storageActions.update) {
-    tasks = tasks.map((task) => task.date === date ? { ...task, isDone: !task.isDone } : task);
+    tasks = tasks.map((task) => date && task.date === +date ? { ...task, isDone: !task.isDone } : task);
   }
   if (action === storageActions.delete) {
-    tasks.splice(tasks.findIndex((task) => task.date === date), 1);
+    tasks.splice(tasks.findIndex((task) => date && task.date === +date), 1);
   }
   if (action === storageActions.clearCompleted) {
     tasks = tasks.filter((task) => !task.isDone);

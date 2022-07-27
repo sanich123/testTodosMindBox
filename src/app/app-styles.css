@@ -1,3 +1,52 @@
 .active {
   text-decoration: line-through;
 }
+
+.layout {
+  display: grid;
+  grid-template-rows: 50px auto 50px 50px;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  margin: 20% auto;
+}
+
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.label-input-checkbox {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 500px;
+  min-height: 30px;
+}
+
+.input-text {
+  min-height: 30px;
+  min-width: 700px;
+}
+
+.delete-btn {
+  position: absolute;
+  border: none;
+  background: transparent;
+  top: 0;
+  right: -20px;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 33% 66%;
+  width: 700px;
+  justify-content: space-between;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}

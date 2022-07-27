@@ -1,12 +1,12 @@
 export interface Tasks {
   task: string,
   isDone: boolean,
-  date: string,
+  date: number,
 }
 
 export interface ChangeStorage {
   tasks: Tasks[];
   setIsNeedToUpdate: (arg: boolean) => void;
-  date?: string;
+  date?: number;
   isNeedToUpdate: boolean;
 }
